@@ -1,0 +1,172 @@
+program.sub.screenSU.start
+gui.F_RouterSelect..create
+gui.F_RouterSelect..caption("Router Browser")
+gui.F_RouterSelect..size(3795,1680)
+gui.F_RouterSelect..position(0,0)
+gui.F_RouterSelect..event(unload,f_routerselect_unload)
+gui.F_RouterSelect..alwaysontop(False)
+gui.F_RouterSelect..fontname("Arial")
+gui.F_RouterSelect..fontsize(8)
+gui.F_RouterSelect..forecolor(0)
+gui.F_RouterSelect..fontstyle(,,,,)
+gui.F_RouterSelect..BackColor(-2147483633)
+gui.F_RouterSelect..controlbox(True)
+gui.F_RouterSelect..maxbutton(True)
+gui.F_RouterSelect..minbutton(True)
+gui.F_RouterSelect..mousepointer(0)
+gui.F_RouterSelect..moveable(True)
+gui.F_RouterSelect..sizeable(True)
+gui.F_RouterSelect..ShowInTaskBar(True)
+gui.F_RouterSelect..titlebar(True)
+
+gui.F_RouterSelect.optRouterName.create(option)
+gui.F_RouterSelect.optRouterName.caption("Router Name")
+gui.F_RouterSelect.optRouterName.visible(True)
+gui.F_RouterSelect.optRouterName.size(1575,255)
+gui.F_RouterSelect.optRouterName.zorder(0)
+gui.F_RouterSelect.optRouterName.position(170,180)
+gui.F_RouterSelect.optRouterName.enabled(True)
+gui.F_RouterSelect.optRouterName.alignment(0)
+gui.F_RouterSelect.optRouterName.fontname("Arial")
+gui.F_RouterSelect.optRouterName.fontsize(8)
+gui.F_RouterSelect.optRouterName.event(click,optroutername_click)
+gui.F_RouterSelect.optRouterDesc.create(option)
+gui.F_RouterSelect.optRouterDesc.caption("Router Description")
+gui.F_RouterSelect.optRouterDesc.visible(True)
+gui.F_RouterSelect.optRouterDesc.size(1845,285)
+gui.F_RouterSelect.optRouterDesc.zorder(0)
+gui.F_RouterSelect.optRouterDesc.position(1715,185)
+gui.F_RouterSelect.optRouterDesc.enabled(True)
+gui.F_RouterSelect.optRouterDesc.alignment(0)
+gui.F_RouterSelect.optRouterDesc.fontname("Arial")
+gui.F_RouterSelect.optRouterDesc.fontsize(8)
+gui.F_RouterSelect.optRouterDesc.event(click,optrouterdesc_click)
+gui.F_RouterSelect.cmdRTR_BWR_ok.create(button)
+gui.F_RouterSelect.cmdRTR_BWR_ok.caption("OK")
+gui.F_RouterSelect.cmdRTR_BWR_ok.visible(True)
+gui.F_RouterSelect.cmdRTR_BWR_ok.size(855,375)
+gui.F_RouterSelect.cmdRTR_BWR_ok.zorder(0)
+gui.F_RouterSelect.cmdRTR_BWR_ok.position(170,650)
+gui.F_RouterSelect.cmdRTR_BWR_ok.enabled(True)
+gui.F_RouterSelect.cmdRTR_BWR_ok.fontname("Arial")
+gui.F_RouterSelect.cmdRTR_BWR_ok.fontsize(8)
+gui.F_RouterSelect.cmdRTR_BWR_ok.event(click,cmdrtr_bwr_ok_click)
+program.sub.screenSU.end
+
+Program.Sub.Preflight.Start
+
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sQuery.Declare(String)
+V.Local.sWidth.Declare(String)
+V.Local.sTitles.Declare(String)
+V.Local.sReturn.Declare(String)
+
+'synchronous
+F.Intrinsic.Control.If(V.Caller.Hook,=,16720)
+
+Gui.F_RouterSelect..Show
+
+'	F.ODBC.Connection!conX.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+'	F.Intrinsic.String.Split("DESCRIPTION*!*ALT DESCRIPTION*!*ROUTER*!*CUSTOMER","*!*",V.Local.sTitles)
+'	F.Intrinsic.String.Split("2800*!*3900*!*1800*!*1000","*!*",V.Local.swidth)
+'	V.Local.sQuery.Set("SELECT ROUTER_HEADER.DESCRIPTION_ROUTER, ROUTER_DESC.DESC_ROUTER_1,ROUTER_HEADER.ROUTER, ROUTER_HEADER.CUSTOMER from ROUTER_HEADER full join ROUTER_DESC on ROUTER_HEADER.ROUTER = ROUTER_DESC.ROUTER where ROUTER_HEADER.ROUTER_TYPE = 'H' and ROUTER_DESC.ROUTER_TYPE = 'I' ORDER BY ROUTER_HEADER.DESCRIPTION_ROUTER, ROUTER_DESC.DESC_ROUTER_1,ROUTER_HEADER.ROUTER, ROUTER_HEADER.CUSTOMER")
+'
+'	F.Intrinsic.UI.SetBrowserHotTypeAhead(True)
+'	F.Intrinsic.UI.SetBrowserOOT(True)
+'	F.Intrinsic.UI.Browser("Select Router","conx",V.Local.squery,V.Local.sTitles,V.Local.sWidth,10500,8000,V.Local.sReturn)
+'
+'	F.Intrinsic.Control.If(V.Local.sReturn,<>,"***CANCEL***")
+'		F.Intrinsic.string.Split(V.Local.sReturn,"*!*",V.Local.sReturn)
+'		V.Passed.009001.Set(V.Local.sReturn(2))
+'	F.Intrinsic.Control.EndIf
+'
+'	F.ODBC.Connection!conX.Close
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: ATG_ROUTER_BWSR_OVR.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Main.End
+
+program.sub.cmdrtr_bwr_ok_click.start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sQuery.Declare(String)
+V.Local.sWidth.Declare(String)
+V.Local.sTitles.Declare(String)
+V.Local.sReturn.Declare(String)
+F.Intrinsic.Control.If(V.Screen.F_RouterSelect!optRouterName.value,=,True)
+F.Intrinsic.Control.End
+F.Intrinsic.Control.ElseIf(V.Screen.F_RouterSelect!optRouterDesc.value,=,True)
+	F.ODBC.Connection!conX.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+'	Gui.F_RouterSelect..Show
+	F.Intrinsic.String.Split("DESCRIPTION*!*ALT DESCRIPTION*!*ROUTER*!*CUSTOMER","*!*",V.Local.sTitles)
+	F.Intrinsic.String.Split("2800*!*3900*!*1800*!*1000","*!*",V.Local.swidth)
+	V.Local.sQuery.Set("SELECT ROUTER_HEADER.DESCRIPTION_ROUTER, ROUTER_DESC.DESC_ROUTER_1,ROUTER_HEADER.ROUTER, ROUTER_HEADER.CUSTOMER from ROUTER_HEADER full join ROUTER_DESC on ROUTER_HEADER.ROUTER = ROUTER_DESC.ROUTER where ROUTER_HEADER.ROUTER_TYPE = 'H' and ROUTER_DESC.ROUTER_TYPE = 'I' ORDER BY ROUTER_HEADER.DESCRIPTION_ROUTER, ROUTER_DESC.DESC_ROUTER_1,ROUTER_HEADER.ROUTER, ROUTER_HEADER.CUSTOMER")
+
+	F.Intrinsic.UI.SetBrowserHotTypeAhead(True)
+	F.Intrinsic.UI.SetBrowserOOT(True)
+	F.Intrinsic.UI.Browser("Select Router","conx",V.Local.squery,V.Local.sTitles,V.Local.sWidth,10500,8000,V.Local.sReturn)
+
+	F.Intrinsic.Control.If(V.Local.sReturn,<>,"***CANCEL***")
+		F.Intrinsic.string.Split(V.Local.sReturn,"*!*",V.Local.sReturn)
+		V.Passed.009001.Set(V.Local.sReturn(2))
+	F.Intrinsic.Control.EndIf
+
+	F.ODBC.Connection!conX.Close
+	V.Passed.777777.Set(1)
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.EndIf
+
+	F.Intrinsic.Control.ExitSub
+
+	F.Intrinsic.Control.Label("Main_Err")
+	F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+		Function.Intrinsic.String.Concat("Project: ATG_ROUTER_BWSR_OVR.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+		F.Intrinsic.UI.Msgbox(V.Local.sError)
+	Function.Intrinsic.Control.EndIf
+
+
+program.sub.cmdrtr_bwr_ok_click.end
+
+program.sub.optroutername_click.start
+
+
+program.sub.optroutername_click.end
+
+program.sub.optrouterdesc_click.start
+
+
+program.sub.optrouterdesc_click.end
+
+program.sub.f_routerselect_unload.start
+F.Intrinsic.Control.End
+
+program.sub.f_routerselect_unload.end
+
+Program.Sub.Comments.Start
+${$0$}$ATG_ROUTER_BWSR_OVR$}$MEK$}$3/28/2012
+${$3$}$0$}$$}$-1$}$-1$}$$}$1/1/1900$}$From the router lookup screen, instead of seeing BRWRC10T, a custom GAB router browser will be launched from hook 16720. The GAB browser will include these collumns in this order:
+
+Router Description
+Alt Description 1
+Router Number
+Customer Name
+Program.Sub.Comments.End
+
